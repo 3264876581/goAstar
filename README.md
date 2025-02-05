@@ -54,7 +54,8 @@ func main() {
 
 green cube is obstalce,I scan this map by unity ray and then bulid a obstacle index json file to replace all obstacle cube:
 
-![6](https://github.com/user-attachments/assets/9b366fee-f4ad-4bf0-9394-fcf99f0f3524)
+![1](https://github.com/user-attachments/assets/9d072ccf-3409-478f-8e2a-c72b90130fc2)
+
 
 obstacle json map is in MapData file,like this:
 
