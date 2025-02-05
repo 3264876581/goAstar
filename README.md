@@ -26,10 +26,9 @@ manager.FinalPathList-----save Inflection node
 
 manager.SmoothValType.SmoothFinalIndex -----save smallest cost index of manager.FinalPathList
 
-you can judge PathFind like this to use smallest cost index
-
 ![1](https://github.com/user-attachments/assets/5681ae5d-20b0-444d-b9b6-e7f3a95152ea)
 
+you can judge PathFind like this to use smallest cost index:
 
 ```go
 
