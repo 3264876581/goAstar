@@ -125,6 +125,7 @@ result map(unity):
 ![2](https://github.com/user-attachments/assets/030cf164-c7d5-45b4-aacd-c29cb5320f2f)
 
 result map(go print):
+
 ![dcd10e77-a5cb-4663-a17c-ca963993ad63](https://github.com/user-attachments/assets/bf67c48e-189c-41f3-88e4-0ae98b1ae941)
 ![cb8bef9b-fbf1-4102-b5d1-531a727bc6a4](https://github.com/user-attachments/assets/89c289f6-2da4-4d97-b5a6-566e36c34313)
 ![ca4fd4af-6215-498c-870e-1136399b2342](https://github.com/user-attachments/assets/ca21655f-bea6-4a4a-993e-922ff1fccc1f)
