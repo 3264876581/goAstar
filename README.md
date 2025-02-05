@@ -60,6 +60,7 @@ obstacle json map is in MapData file,like this:
 
 ![1](https://github.com/user-attachments/assets/78442000-6e67-4788-883c-6defd7d2061a)
 
+main:
 
 ```go
 package main
@@ -118,6 +119,8 @@ func main() {
 	}
 }
 ```
+result map:
+
 
 # My Astar Rules
 
