@@ -1,6 +1,7 @@
 # BestAstar
 a fast，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
 # Use
+
 ```go
 func main() {
 	var manager = DataMgr.NewMapManager(10, 10)
@@ -21,10 +22,13 @@ func main() {
 ![1](https://github.com/user-attachments/assets/5681ae5d-20b0-444d-b9b6-e7f3a95152ea)
 
 # Result
-manager.FinalPathList save Inflection node 
-manager.SmoothValType.SmoothFinalIndex save smallest cost index of manager.FinalPathList
-```go
+manager.FinalPathList-----save Inflection node 
+
+manager.SmoothValType.SmoothFinalIndex -----save smallest cost index of manager.FinalPathList
+
 you can judge PathFind like this to use smallest cost index
+
+```go
 
 func main() {
 	var manager = DataMgr.NewMapManager(10, 10)
