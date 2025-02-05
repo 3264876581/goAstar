@@ -1,4 +1,4 @@
-# BestAstar
+# BestAstar(Grid)
 a fast，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
 # Use
 ![2](https://github.com/user-attachments/assets/32799ddc-4de8-4835-8c7c-0e220ff4218c)
@@ -50,6 +50,13 @@ func main() {
 	}
  }
 ```
+# Test:1000*1000 map(unity map)
+
+green cube is obstalce
+
+![6](https://github.com/user-attachments/assets/9b366fee-f4ad-4bf0-9394-fcf99f0f3524)
+
+
 
 # My Astar Rules
 
