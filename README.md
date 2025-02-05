@@ -60,7 +60,7 @@ obstacle json map is in MapData file,like this:
 
 ![1](https://github.com/user-attachments/assets/78442000-6e67-4788-883c-6defd7d2061a)
 
-main:
+main code:
 
 ```go
 package main
@@ -119,7 +119,23 @@ func main() {
 	}
 }
 ```
-result map:
+result map(unity):
+
+![2](https://github.com/user-attachments/assets/030cf164-c7d5-45b4-aacd-c29cb5320f2f)
+
+result map(go print):
+![dcd10e77-a5cb-4663-a17c-ca963993ad63](https://github.com/user-attachments/assets/bf67c48e-189c-41f3-88e4-0ae98b1ae941)
+![cb8bef9b-fbf1-4102-b5d1-531a727bc6a4](https://github.com/user-attachments/assets/89c289f6-2da4-4d97-b5a6-566e36c34313)
+![ca4fd4af-6215-498c-870e-1136399b2342](https://github.com/user-attachments/assets/ca21655f-bea6-4a4a-993e-922ff1fccc1f)
+![5ab63e1d-5ecd-4a31-a1e9-8e8e71d6dd4b](https://github.com/user-attachments/assets/0a6f8931-2be0-45be-80fc-b9f0e6a6b0b7)
+![9726f768-53ef-412e-ada8-36fc73e5d209](https://github.com/user-attachments/assets/e47c2786-8c60-40c0-94c0-66c73dd263f3)
+![315a72e1-578a-404d-bad2-6f8699b80106](https://github.com/user-attachments/assets/091a2cf9-d098-4776-ae4a-ef81b63c0529)
+![9e91af1f-3e20-4b8b-882d-562bcd1c62d6](https://github.com/user-attachments/assets/e0425280-0dae-44e7-a4af-c12ba4e89d30)
+
+
+print(smallest cost index):0-2-9-10-11
+
+![3](https://github.com/user-attachments/assets/4d0f7380-9429-4f49-aa34-81827c81b43b)
 
 
 # My Astar Rules
