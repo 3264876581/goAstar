@@ -1,2 +1,3 @@
 # BestAstar
 a fast，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
+# Use
