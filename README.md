@@ -20,7 +20,6 @@ func main() {
 	manager.PathFind(0, 0, 9, 9, true, true, true)
 }
 ```
-![1](https://github.com/user-attachments/assets/5681ae5d-20b0-444d-b9b6-e7f3a95152ea)
 
 # Result
 manager.FinalPathList-----save Inflection node 
@@ -28,6 +27,9 @@ manager.FinalPathList-----save Inflection node
 manager.SmoothValType.SmoothFinalIndex -----save smallest cost index of manager.FinalPathList
 
 you can judge PathFind like this to use smallest cost index
+
+![1](https://github.com/user-attachments/assets/5681ae5d-20b0-444d-b9b6-e7f3a95152ea)
+
 
 ```go
 
