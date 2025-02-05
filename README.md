@@ -50,3 +50,24 @@ func main() {
 	}
  }
 ```
+
+# My Astar Rules
+
+8 dir:
+
+![3](https://github.com/user-attachments/assets/3553d0af-796c-441a-9808-95a5875c0a58)
+
+# obstacle judge Rules(white circle is obstacle,if some one is obstacle,failed to pass)
+
+1.Normal
+
+![4](https://github.com/user-attachments/assets/9bbe4d9b-1cb9-4b15-9b96-551dfa9595e3)
+
+2.y=kx+b(check x line and y line,if a point around 4 obstacles,judge this 4 obstacles)
+
+like there 4 triangles(different shape means obstacle)
+
+![5](https://github.com/user-attachments/assets/c4d8eaf7-5e0a-4947-a1e3-59353840eded)
+
+
+
