@@ -1,5 +1,5 @@
 # BestAstar(Grid)
-a fast，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
+A fast，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
 # Use
 ![2](https://github.com/user-attachments/assets/32799ddc-4de8-4835-8c7c-0e220ff4218c)
 
