@@ -136,7 +136,7 @@ result map(go print):
 ![9e91af1f-3e20-4b8b-882d-562bcd1c62d6](https://github.com/user-attachments/assets/e0425280-0dae-44e7-a4af-c12ba4e89d30)
 
 
-print(smallest cost index):0-2-9-10-11
+print(smallest cost index)： 0 - 2 - 9 - 10 - 11
 
 ![3](https://github.com/user-attachments/assets/4d0f7380-9429-4f49-aa34-81827c81b43b)
 
