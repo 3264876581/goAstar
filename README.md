@@ -1,5 +1,5 @@
 # Astar(Grid)
-A fast(1k*1k cost avg 1-2ms,10k*10k cost avg 15ms)，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
+A fast(1k * 1k cost avg 1-2ms,10k * 10k cost avg 15ms)，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
 # Use
 ![2](https://github.com/user-attachments/assets/32799ddc-4de8-4835-8c7c-0e220ff4218c)
 
