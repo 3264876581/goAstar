@@ -149,7 +149,7 @@ print(smallest cost index)： 0 - 2 - 9 - 10 - 11
 
 ![3](https://github.com/user-attachments/assets/3553d0af-796c-441a-9808-95a5875c0a58)
 
-# obstacle judge Rules
+# About Smooth path：obstacle judge Rules
 # if has one circle is obstacle , pass failed
 
 1.Normal
