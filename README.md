@@ -154,9 +154,14 @@ print(smallest cost index)： 0 - 2 - 9 - 10 - 11
 
 ![4](https://github.com/user-attachments/assets/9bbe4d9b-1cb9-4b15-9b96-551dfa9595e3)
 
-2.y=kx+b(check x line and y line,if a point around 4 obstacles,judge this 4 obstacles)
+2.y=kx+b(check x line and y line)
 
-like there 4 triangles(different shape means obstacle)
+if a point around 4 obstacles,judge this 4 obstacles around it
+
+else judge 2 obstacles(ud and down or left and right)
+
+around 4 obstacles：like there 4 triangles(different shape means obstacle)
+around 2 obstacles: like 2 cicle at last img
 
 ![5](https://github.com/user-attachments/assets/c4d8eaf7-5e0a-4947-a1e3-59353840eded)
 
