@@ -50,7 +50,8 @@ manager.FinalPathList-----save Inflection node
 
 manager.SmoothValType.SmoothFinalIndex -----save smallest cost index of manager.FinalPathList
 
-![1](https://github.com/user-attachments/assets/5681ae5d-20b0-444d-b9b6-e7f3a95152ea)
+![11](https://github.com/user-attachments/assets/a36c102b-2581-49f8-88fd-0dda398b52fe)
+
 
 you can judge PathFind flag(if success find) then loop SmoothFinalIndex like this to use smallest cost index in FinalPathList:
 
