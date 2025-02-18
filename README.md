@@ -9,7 +9,7 @@ var manager = DataMgr.NewMapManager(1000, 1000)
 
 findPath 
 ```go
-manager.PathFind(437, 428, 0, 0, true, true, true)
+manager.PathFind(0, 0, 9, 9, true, true, true)
 ```
 ![2](https://github.com/user-attachments/assets/32799ddc-4de8-4835-8c7c-0e220ff4218c)
 
