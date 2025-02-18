@@ -51,7 +51,7 @@ func main() {
 
 manager.FinalPathList -> save Inflection node (there is 0 1 2 3)
 
-manager.SmoothValType.SmoothFinalIndex -> save smallest cost index of manager.FinalPathList (there is 0 1 3)
+manager.SmoothValType.SmoothFinalIndex (there is 0 1 3) -> save smallest cost index of manager.FinalPathList
 
 ![13](https://github.com/user-attachments/assets/e5c17b3c-e038-4279-bfdd-edcb6a29244d)
 
