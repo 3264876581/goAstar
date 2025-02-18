@@ -24,6 +24,9 @@ manager.SetRoad(0, 0)
 ```
 
 # Example main
+
+if you want to change Obstacle or road，please before PathFind
+
 ```go
 func main() {
 	var manager = DataMgr.NewMapManager(10, 10)
