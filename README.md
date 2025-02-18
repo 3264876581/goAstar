@@ -25,7 +25,7 @@ manager.SetRoad(0, 0)
 
 # Example main
 
-if you want to change Obstacle or road，please before PathFind
+if you want to change Obstacle or road，please do it before PathFind
 
 ```go
 func main() {
