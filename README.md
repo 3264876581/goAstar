@@ -80,6 +80,8 @@ func main() {
 	}
  }
 ```
+![15](https://github.com/user-attachments/assets/aca0d0bc-39aa-4b41-b86d-c6310fb32c97)
+
 # Test:1000*1000 map(unity map)
 
 green cube is obstalce,I scan this map by unity ray and then bulid a obstacle index json file to replace all obstacle cube:
