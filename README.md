@@ -23,6 +23,7 @@ set Road parms(x y)
 manager.SetRoad(0, 0)
 ```
 
+# Example main
 ```go
 func main() {
 	var manager = DataMgr.NewMapManager(10, 10)
