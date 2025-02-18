@@ -4,51 +4,56 @@ import (
 	"Go_Server/DataMgr"
 	"fmt"
 	jsoniter "github.com/json-iterator/go"
+	"io"
+	"os"
 )
 
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary // 使用兼容标准库的配置
 // ObstacleIndex json
+
+// set Obstacle from json
+var manager = DataMgr.NewMapManager(1000, 1000)
+
 type ObstacleIndex struct {
 	I int `json:"i"`
 	J int `json:"j"`
 }
 
-// set Obstacle from json
-//
-//	func loadObstacleJson() {
-//		//read json obstacle
-//		file, err := os.Open("MapData/mapObstacle2.json")
-//		if err != nil {
-//			fmt.Println("Error opening file:", err)
-//			return
-//		}
-//		defer file.Close()
-//		// real Obstacle json file
-//		byteValue, _ := io.ReadAll(file)
-//		// load Obstacle json by json-iterator
-//		err = Json.Unmarshal(byteValue, &ObstacleIndexSlice)
-//		if err != nil {
-//			fmt.Println("Error parsing JSON:", err)
-//			return
-//		}
-//		// SetObstacle
-//		for _, obstacle := range ObstacleIndexSlice {
-//			manager.SetObstacle(obstacle.I, obstacle.J)
-//		}
-//	}
+func loadObstacleJson() {
+	//read json obstacle
+	file, err := os.Open("MapData/mapObstacle_Test.json")
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+	// real Obstacle json file
+	byteValue, _ := io.ReadAll(file)
+	// load Obstacle json by json-iterator
+	err = Json.Unmarshal(byteValue, &ObstacleIndexSlice)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+	// SetObstacle
+	for _, obstacle := range ObstacleIndexSlice {
+		manager.SetObstacle(obstacle.I, obstacle.J)
+	}
+}
 
+// ObstacleIndexSlice save json ObstacleIndex
 var ObstacleIndexSlice = make([]ObstacleIndex, 0, 100000)
 
 func main() {
-	var manager = DataMgr.NewMapManager(10, 10)
-	//manager.PathFind(0, 0, 9, 9, true, true, true)
-	if manager.PathFind(0, 0, 9, 9, true, false, false) {
+	//---------------------------------------load json Obstacle
+	loadObstacleJson()
+	//SetObstacle
+	if manager.PathFind(437, 428, 0, 0, true, true, true) {
 		for _, val := range manager.SmoothValType.SmoothFinalIndex {
 			fmt.Println("x:", manager.FinalPathList[val].X, "\ty:", manager.FinalPathList[val].Y)
 		}
 	}
-	//---------------------------------------load json Obstacle
-	//loadObstacleJson()
+
 	//reader := bufio.NewReader(os.Stdin)
 	//for {
 	//	fmt.Println("Press Enter to find path...")

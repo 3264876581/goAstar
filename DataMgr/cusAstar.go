@@ -2,6 +2,7 @@ package DataMgr
 
 import (
 	"container/heap"
+	"sort"
 	"strconv"
 
 	//"container/heap"
@@ -202,16 +203,20 @@ var rangeOffset = [][]int{
 	{1, 1},   //right up
 	{-1, -1}, //left down
 	{1, -1},  //right down
-	//
-	//{-1, -2}, //left up
-	//{-2, -1}, //right up
-	//{-2, 1},  //left down
-	//{-1, 2},  //right down
+	//*9*10*
+	//8***11
+	//**o**
+	//15***12
+	//*14*13*
+	//{-1, -2}, //8
+	//{-2, -1}, //9
+	//{-2, 1},  //10
+	//{-1, 2},  //11
 	////
-	//{1, 2},  //left up
-	//{2, 1},  //right up
-	//{2, -1}, //left down
-	//{1, -2}, //right down
+	//{1, 2},  //12
+	//{2, 1},  //13
+	//{2, -1}, //14
+	//{1, -2}, //15
 }
 
 func (mapManager *MapManager) printMap() {
@@ -228,7 +233,8 @@ func (mapManager *MapManager) printMap() {
 // result: SmoothFinalIndex(some index of FinalPathList slice)
 // node: FinalPathList(Inflection node)
 func (mapManager *MapManager) PathFind(x1, y1, x2, y2 int, printResultFlag, printMapFlag, printTimeTokenFlag bool) bool {
-	mapManager.printTime.StartTime = time.Now().UnixMicro()
+	mapManager.printTime.PathFindCost = time.Now().UnixMicro()
+	mapManager.printTime.ResetTimeCost = time.Now().UnixMicro()
 	//boundary status
 	if x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || x1 >= mapManager.rows || y1 >= mapManager.cols || x2 >= mapManager.rows || y2 >= mapManager.cols {
 		fmt.Println("PathFind Failed:start Index or end Index is out of map range!")
@@ -250,7 +256,7 @@ func (mapManager *MapManager) PathFind(x1, y1, x2, y2 int, printResultFlag, prin
 		mapManager.SmoothValType.SmoothFinalIndex = mapManager.SmoothValType.SmoothFinalIndex[:0]
 		mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.mapData[x1][y1], mapManager.mapData[x2][y2])
 		mapManager.SmoothValType.SmoothFinalIndex = append(mapManager.SmoothValType.SmoothFinalIndex, 0, 1)
-		mapManager.printTime.EndTime = time.Now().UnixMicro()
+		mapManager.printTime.PathFindCost = time.Now().UnixMicro() - mapManager.printTime.PathFindCost
 		//printMap
 		if printMapFlag {
 			for index, val := range mapManager.FinalPathList {
@@ -265,21 +271,21 @@ func (mapManager *MapManager) PathFind(x1, y1, x2, y2 int, printResultFlag, prin
 		}
 		//printTime
 		if printTimeTokenFlag {
-			fmt.Printf("%-25s %d μs\n", "pathFind Token(same line):", mapManager.printTime.EndTime-mapManager.printTime.StartTime)
+			fmt.Printf("%-25s %d μs\n", "pathFind Token(no obstacle):", mapManager.printTime.PathFindCost)
 		}
 		//success obstacleJudge return true
 		return true
 	}
 	//resetMapData
 	mapManager.resetMapData(x1, y1)
-	mapManager.printTime.ResetTimeCost = time.Now().UnixMicro() - mapManager.printTime.StartTime
+	mapManager.printTime.ResetTimeCost = time.Now().UnixMicro() - mapManager.printTime.ResetTimeCost
 	//pathFind
 	mapManager.pathFind(x1, y1, x2, y2)
 	//pathFind success
 	if mapManager.pathFindFlag {
 		//SmoothPath
 		mapManager.smoothPath()
-		mapManager.printTime.PathFindCost = time.Now().UnixMicro() - mapManager.printTime.StartTime
+		mapManager.printTime.PathFindCost = time.Now().UnixMicro() - mapManager.printTime.PathFindCost
 		//printMap
 		if printMapFlag {
 			for index, val := range mapManager.FinalPathList {
@@ -294,6 +300,9 @@ func (mapManager *MapManager) PathFind(x1, y1, x2, y2 int, printResultFlag, prin
 		//printTime
 		if printTimeTokenFlag {
 			fmt.Printf("%-25s %d μs\n", "ResetTimeCost Taken:", mapManager.printTime.ResetTimeCost)
+			fmt.Printf("%-25s %d μs\n", "UseLessCost Taken:", mapManager.printTime.UseLessCost)
+			fmt.Printf("%-25s %d μs\n", "SetImportantNodeCost Taken:", mapManager.printTime.SetImportantNodeCost)
+			fmt.Printf("%-25s %d μs\n", "SmoothBestWay Taken:", mapManager.printTime.SmoothBestWay)
 			fmt.Printf("%-25s %d μs\n", "pathFind Taken:", mapManager.printTime.PathFindCost)
 		}
 	}
@@ -387,6 +396,7 @@ func (mapManager *MapManager) smoothPath() {
 		return
 	}
 	//-----------------------------------------------------delete useless node(node >= 3)-----------------------------------------------------
+	mapManager.printTime.UseLessCost = time.Now().UnixMicro()
 	//add Start node into afterUseLessPathList
 	mapManager.afterUseLessPathList = append(mapManager.afterUseLessPathList, mapManager.readySmoothPathList[0])
 	//set an unreal start dir,same to next
@@ -417,41 +427,46 @@ func (mapManager *MapManager) smoothPath() {
 	}
 	//finally add End node into afterUseLessPathList
 	mapManager.afterUseLessPathList = append(mapManager.afterUseLessPathList, mapManager.readySmoothPathList[len(mapManager.readySmoothPathList)-1])
-	var J = 0
-	for i := 0; i < len(mapManager.afterUseLessPathList); i++ {
-		//add next
-		mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.afterUseLessPathList[i])
-		//
-		if i != len(mapManager.readySmoothPathList)-1 {
-			for j := J; j < len(mapManager.temporaryImportantIndexOfUselessNode); j++ {
-				//if not same to i and i+1
-				if mapManager.afterUseLessPathList[i] != mapManager.temporaryImportantIndexOfUselessNode[j] &&
-					mapManager.afterUseLessPathList[i+1] != mapManager.temporaryImportantIndexOfUselessNode[j] {
-					if mapManager.isPointOnLineBetweenOptimized(
-						mapManager.afterUseLessPathList[i].X, mapManager.afterUseLessPathList[i].Y,
-						mapManager.afterUseLessPathList[i+1].X, mapManager.afterUseLessPathList[i+1].Y,
-						mapManager.temporaryImportantIndexOfUselessNode[j].X, mapManager.temporaryImportantIndexOfUselessNode[j].Y) {
-						//add temporaryImportantIndexOfUselessNode,not add same node
-						mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.temporaryImportantIndexOfUselessNode[j])
-						//if temporaryImportantIndexOfUselessNode is last one,stop add temporaryImportantIndexOfUselessNode
-						if j == len(mapManager.temporaryImportantIndexOfUselessNode)-1 {
-							J = len(mapManager.temporaryImportantIndexOfUselessNode)
-						}
-					} else {
-						//if this time,first temporaryImportantIndexOfUselessNode is not PointOnLineBetweenOptimized
-						//next time,begin from same j
-						J = j
-						break
-					}
-				} else {
-					//same node
-					//next J
-					J = j + 1
-					break
-				}
-			}
-		}
-	}
+	//---------------------------------------------------------分割
+	//得到起点索引点或者不包括首尾索引的有用拐点
+	mapManager.deleteUseLessNode()
+	mapManager.findSecondToLastNode()
+	//J是存储的关键拐点------------------------------------------------暂时弃用
+	//var J = 0
+	//for i := 0; i < len(mapManager.afterUseLessPathList); i++ {
+	//	//添加到前1点到最终路径
+	//	mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.afterUseLessPathList[i])
+	//	//如果不是最后一个点，也就是说还要继续判断
+	//	if i != len(mapManager.afterUseLessPathList)-1 {
+	//		for j := J; j < len(mapManager.temporaryImportantIndexOfUselessNode); j++ {
+	//			//拿到前后2点先判断是否重合,因为关键拐点有可能也是普通拐点，所以会重合
+	//			if mapManager.afterUseLessPathList[i] != mapManager.temporaryImportantIndexOfUselessNode[j] &&
+	//				mapManager.afterUseLessPathList[i+1] != mapManager.temporaryImportantIndexOfUselessNode[j] {
+	//				//如果不是跟前一个和后一个重合的点，继续判断是否 处于2者之间(因为去重的关键拐点一定是在2点之间的) 和 共线(而且我们并不知道他是在哪2点之间，所以要判断是否共线)
+	//				if mapManager.isPointOnLineBetweenOptimized(
+	//					mapManager.afterUseLessPathList[i].X, mapManager.afterUseLessPathList[i].Y,
+	//					mapManager.afterUseLessPathList[i+1].X, mapManager.afterUseLessPathList[i+1].Y,
+	//					mapManager.temporaryImportantIndexOfUselessNode[j].X, mapManager.temporaryImportantIndexOfUselessNode[j].Y) {
+	//					//处于2者之间 并且 共线，则添加进最终路径
+	//					mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.temporaryImportantIndexOfUselessNode[j])
+	//					//如果当前j已经是最后一个在上面已经被添加进最终路径，由于多层for循环的原因，设置J超出这个范围，以后循环不进入J循环，因为已经添加完毕了
+	//					if j == len(mapManager.temporaryImportantIndexOfUselessNode)-1 {
+	//						J = len(mapManager.temporaryImportantIndexOfUselessNode)
+	//					}
+	//				} else {
+	//					//不处于2者之间 或 不共线，下次循环时，J还是从当前位置开始
+	//					J = j
+	//					break
+	//				}
+	//			} else {
+	//				//如果是重合的，就直接跳过
+	//				J = j + 1
+	//				break
+	//			}
+	//		}
+	//	}
+	//}
+	mapManager.printTime.UseLessCost = time.Now().UnixMicro() - mapManager.printTime.UseLessCost
 	//-----------------------------------------------------set importantFinalInflection AllFinalInflection Index-----------------------------------------------------
 	//fmt.Println("check afterUseLessPathList:")
 	//set ImportantInflectionIndex and UnimportantInflectionIndex about afterUseLessPathList
@@ -461,24 +476,29 @@ func (mapManager *MapManager) smoothPath() {
 		//	i, " -> ", " x: ", mapManager.afterUseLessPathList[i].x,
 		//	" y: ", mapManager.afterUseLessPathList[i].y,
 		//	" nodeType: ", mapManager.afterUseLessPathList[i].nodeType)
-		//set important inflectionIndex
-		if mapManager.checkImportantInflectionIndex(mapManager.FinalPathList[i].X, mapManager.FinalPathList[i].Y) {
-			//is important inflectionIndex
-			mapManager.importantFinalInflectionIndex = append(mapManager.importantFinalInflectionIndex, i)
-		}
-		//set AllFinal InflectionIndex
+		//set important inflectionIndex ---暂时弃用
+		//if mapManager.checkImportantInflectionIndex(mapManager.FinalPathList[i].X, mapManager.FinalPathList[i].Y) {
+		//	//is important inflectionIndex
+		//	mapManager.importantFinalInflectionIndex = append(mapManager.importantFinalInflectionIndex, i)
+		//}
+		//添加除了首尾的所有点进allFinalInflectionIndex
 		mapManager.allFinalInflectionIndex = append(mapManager.allFinalInflectionIndex, i)
 	}
+	mapManager.printTime.SetImportantNodeCost = time.Now().UnixMicro()
 	//like [1] = [[0],[1]] || [2] = [[0,1]]
-	for i := 1; i <= len(mapManager.importantFinalInflectionIndex); i++ {
-		mapManager.SmoothValType.importantCombinationsFinalIndexMap[i] = mapManager.generateCombinations(len(mapManager.importantFinalInflectionIndex)-1, i, true)
-	}
+	//for i := 1; i <= len(mapManager.importantFinalInflectionIndex); i++ {
+	//	mapManager.SmoothValType.importantCombinationsFinalIndexMap[i] = mapManager.generateCombinations(len(mapManager.importantFinalInflectionIndex)-1, i, true)
+	//}
 	for i := 1; i <= len(mapManager.allFinalInflectionIndex); i++ {
-		mapManager.SmoothValType.allCombinationsFinalIndexMap[i] = mapManager.generateCombinations(len(mapManager.allFinalInflectionIndex)-1, i, false)
+		mapManager.SmoothValType.allCombinationsFinalIndexMap[i] = mapManager.generateCombinations(len(mapManager.allFinalInflectionIndex)-1, i)
 	}
+	mapManager.printTime.SetImportantNodeCost = time.Now().UnixMicro() - mapManager.printTime.SetImportantNodeCost
+	//
 	//-----------------------------------------------------recursive Obstacle Check-----------------------------------------------------
+	mapManager.printTime.SmoothBestWay = time.Now().UnixMicro()
 	//smoothBestWay
 	mapManager.smoothBestWay()
+	mapManager.printTime.SmoothBestWay = time.Now().UnixMicro() - mapManager.printTime.SmoothBestWay
 	//
 	//fmt.Println("check SmoothFinalIndex:")
 	//for _, val := range mapManager.SmoothValType.SmoothFinalIndex {
@@ -496,20 +516,22 @@ func (mapManager *MapManager) smoothPath() {
 	//}
 }
 
+// x1x2是首尾点 x3是中间点
 func (mapManager *MapManager) isPointOnLineBetweenOptimized(x1, y1, x2, y2, x3, y3 int) bool {
 	// 判断是否共线
 	if (x2-x1)*(y3-y1)-(y2-y1)*(x3-x1) != 0 {
 		return false
 	}
 
-	// 判断是否位于两点之间
-	if (x3 >= x1 && x3 <= x2) || (x3 >= x2 && x3 <= x1) {
-		if (y3 >= y1 && y3 <= y2) || (y3 >= y2 && y3 <= y1) {
+	// 判断是否位于两点之间 不需要等于 因为等于的话 相当于同一个点 没必要
+	if (x3 > x1 && x3 < x2) || (x3 > x2 && x3 < x1) {
+		if (y3 > y1 && y3 < y2) || (y3 > y2 && y3 < y1) {
 			return true
 		}
 	}
 	return false
 }
+
 func (mapManager *MapManager) smoothBestWay() {
 	//success H temporary h
 	h, H := 0, 0
@@ -674,7 +696,7 @@ func (mapManager *MapManager) getLarger(a, b int) int {
 }
 
 // Generate Combinations --n:len k:want Combinations
-func (mapManager *MapManager) generateCombinations(n, k int, ip bool) [][]int {
+func (mapManager *MapManager) generateCombinations(n, k int) [][]int {
 	var result [][]int
 	// 使用一个栈来保存当前组合的状态
 	var stack []int
@@ -687,14 +709,17 @@ func (mapManager *MapManager) generateCombinations(n, k int, ip bool) [][]int {
 			// 将当前组合复制到结果中
 			combination := make([]int, k)
 			//ip is true,importantFinalInflectionIndex else afterUseLessPathList
-			if ip {
-				for index, val := range stack {
-					combination[index] = mapManager.importantFinalInflectionIndex[val]
-				}
-			} else {
-				for index, val := range stack {
-					combination[index] = mapManager.allFinalInflectionIndex[val]
-				}
+			//if ip {
+			//	for index, val := range stack {
+			//		combination[index] = mapManager.importantFinalInflectionIndex[val]
+			//	}
+			//} else {
+			//	for index, val := range stack {
+			//		combination[index] = mapManager.allFinalInflectionIndex[val]
+			//	}
+			//}
+			for index, val := range stack {
+				combination[index] = mapManager.allFinalInflectionIndex[val]
 			}
 			//
 			result = append(result, combination)
@@ -892,65 +917,133 @@ func (mapManager *MapManager) pathFind(x1, y1, x2, y2 int) {
 				continue
 			}
 			//if k=-1/1,judge 2 obstacle around of 4 status,if have 1 obstacle,continue
-			if index >= 4 {
-				//judge 4 status,if someone is obstacle,continue
+			if index >= 4 && index <= 7 {
+				//判断4个八向的斜向 如果经过有1个障碍 那么不是偏移点 直接continue下一个
 				switch index {
 				case 4:
 					//! OFFSET
 					//F !
-					if offsetX >= 0 && offsetY-1 >= 0 && offsetX < mapManager.rows && offsetY-1 < mapManager.cols {
-						if mapManager.mapData[offsetX][offsetY-1].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+						continue
 					}
-					if offsetX+1 >= 0 && offsetY >= 0 && offsetX+1 < mapManager.rows && offsetY < mapManager.cols {
-						if mapManager.mapData[offsetX+1][offsetY].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+						continue
 					}
 				case 5:
 					//F !
 					//! OFFSET
-					if offsetX-1 >= 0 && offsetY >= 0 && offsetX-1 < mapManager.rows && offsetY < mapManager.cols {
-						if mapManager.mapData[offsetX-1][offsetY].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+						continue
 					}
-					if offsetX >= 0 && offsetY-1 >= 0 && offsetX < mapManager.rows && offsetY-1 < mapManager.cols {
-						if mapManager.mapData[offsetX][offsetY-1].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+						continue
 					}
 				case 6:
 					//OFFSET !
 					//!      F
-					if offsetX >= 0 && offsetY+1 >= 0 && offsetX < mapManager.rows && offsetY+1 < mapManager.cols {
-						if mapManager.mapData[offsetX][offsetY+1].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+						continue
 					}
-					if offsetX+1 >= 0 && offsetY >= 0 && offsetX+1 < mapManager.rows && offsetY < mapManager.cols {
-						if mapManager.mapData[offsetX+1][offsetY].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+						continue
 					}
 				case 7:
 					//!      F
 					//OFFSET !
-					if offsetX-1 >= 0 && offsetY >= 0 && offsetX-1 < mapManager.rows && offsetY < mapManager.cols {
-						if mapManager.mapData[offsetX-1][offsetY].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+						continue
 					}
-					if offsetX >= 0 && offsetY+1 >= 0 && offsetX < mapManager.rows && offsetY+1 < mapManager.cols {
-						if mapManager.mapData[offsetX][offsetY+1].nodeType == 1 {
-							continue
-						}
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+						continue
 					}
 				}
-				//
-				g += 1.4
+				//1.41
+				g += math.Sqrt2
+			} else if index >= 8 {
+				//判断8个十六向 如果经过有1个障碍 那么不是偏移点 直接continue下一个
+				switch index {
+				//感叹号是障碍
+				case 8:
+					//OFFSET !	   *
+					//*      !     F
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY+1) {
+						continue
+					}
+				case 9:
+					//OFFSET *
+					//!	 	 !
+					//* 	 F
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY+1) {
+						continue
+					}
+				case 10:
+					//*   OFFSET
+					//!      !
+					//F		 *
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY-1) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+						continue
+					}
+				case 11:
+					//*  ! OFFSET
+					//F  !	 *
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY-1) {
+						continue
+					}
+				case 12:
+					//F  !   *
+					//*  ! OFFSET
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY-1) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+						continue
+					}
+				case 13:
+					//F      *
+					//!      !
+					//*	   OFFSET
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY-1) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+						continue
+					}
+				case 14:
+					//  *      F
+					//  !      !
+					//OFFSET   *
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY+1) {
+						continue
+					}
+				case 15:
+					//  *  	  !     F
+					//OFFSET  !   	*
+					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+						continue
+					}
+					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY+1) {
+						continue
+					}
+				}
+				//sqrt5 = 2.236
+				g += sqrt5
 			} else {
+				//4个八向的平向 不用判断直接加代价就行
 				g += 1
 			}
 			//if not in openList or closedList,judge wall
@@ -1048,15 +1141,6 @@ func (mapManager *MapManager) pathFind(x1, y1, x2, y2 int) {
 //	return mapManager.openList[i].f > mapManager.openList[j].f
 //}
 
-// 任意位置插入数字类型的元素 注意这个！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-// @param slice []int 将指定元素插入的切片
-// @param num int 指定元素
-// @param index int 插入的指定位置
-//func arrayInsertElement(slice []int, num int, index int) []int {
-//	slice = append(slice[:index], append([]int{num}, slice[index:]...)...)
-//	return slice
-//}
-
 func (mapManager *MapManager) newObstacleJudge(startNode *Node, endNode *Node) bool {
 	mapManager.SmoothValType.k = float64(endNode.Y-startNode.Y) / float64(endNode.X-startNode.X)
 	mapManager.SmoothValType.b = (float64(startNode.Y) + 0.5) - (mapManager.SmoothValType.k * (float64(startNode.X) + 0.5))
@@ -1141,9 +1225,200 @@ func (mapManager *MapManager) checkYKXBForX(y int, realX float64) bool {
 	return true
 }
 
+// true是正常0点 不是障碍或者边界外
+func (mapManager *MapManager) checkBoundaryAndObstacle(x, y int) bool {
+	if x >= 0 && y >= 0 && x < mapManager.rows && y < mapManager.cols {
+		return mapManager.mapData[x][y].nodeType != 1
+	}
+	//
+	return false
+}
+
+// 前提 afterUseLessPathList长度 >= 3,并且afterUseLessPathList里面的拐点的首尾点一定不相连，不会出现recordSaveIndexSlice存储起点索引0的情况
+// 作用：recordSaveIndexSlice保留 除了！ 除了！ 除了！首尾索引！的有用拐点
+func (mapManager *MapManager) deleteUseLessNode() {
+	startIndex := 0
+	endIndex := 1
+	//记录要保留的点 这是存储的afterUseLessPathList的索引,用切片可能会出现重复，直接用Map的key唯一性避免重复
+	//但是map的key是无序遍历的，所以再添加回切片，然后对切片进行排序
+	recordSaveIndexSlice := make(map[int]bool, 128)
+	sortSlice := make([]int, 0, 128)
+	for {
+		if endIndex < len(mapManager.afterUseLessPathList)-1 {
+			//如果当前双指针可以相连(索引相邻 或者 判断成功)
+			if endIndex-startIndex == 1 || mapManager.obstacleJudge(mapManager.afterUseLessPathList[startIndex], mapManager.afterUseLessPathList[endIndex]) {
+				//继续判断下一个 有可能这种情况，0到终点的前一个都可以，0到终点不行，如果这时候endIndex是终点的前一个
+				endIndex++
+				//现在endIndex++过后 endIndex是终点索引，那么就要存储当前判断的startIndex和 索引endIndex-1 然后直接退出
+				if endIndex == len(mapManager.afterUseLessPathList)-1 {
+					recordSaveIndexSlice[startIndex] = true
+					recordSaveIndexSlice[endIndex-1] = true
+					break
+				}
+			} else {
+				//如果当前二指针不能相连，那么二指针的上一个点是要保留的索引点
+				recordSaveIndexSlice[endIndex-1] = true
+				//这个时候 把一指针放到这个保留的索引点，相当于新的起点，二指针现在已经是新起点的下一个
+				startIndex = endIndex - 1
+			}
+		}
+		//如果endIndex 二指针已经到终点了，那么只需要对一指针不断推进判断与终点的连接
+		if endIndex == len(mapManager.afterUseLessPathList)-1 {
+			//假如第一次进来，一指针直接与二指针也就是终点可以连接，那么一指针就是最后一个要保留的有用拐点，直接退出循环
+			if endIndex-startIndex == 1 || mapManager.obstacleJudge(mapManager.afterUseLessPathList[startIndex], mapManager.afterUseLessPathList[endIndex]) {
+				recordSaveIndexSlice[startIndex] = true
+				//如果是终点前一个或者直接与终点相连，那么第一startIndex指针就是最后一个有用拐点
+				break
+			} else {
+				//如果一指针不可以与二指针连接，那么一指针也是要保留的有用拐点，保留之后平移一指针到下一位继续与终点二指针判断，直到成功为止
+				//因为一指针如果是最后一个的前一个与终点判断一定会成功，所以一指针不用判断边界条件
+				recordSaveIndexSlice[startIndex] = true
+				startIndex++
+				//记得continue 防止我第二指针都到终点了，第一startIndex指针还走下面的逻辑，不可能走的
+				continue
+			}
+		}
+	}
+	//添加起点
+	mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.afterUseLessPathList[0])
+	//添加recordSaveIndexSlice的key,key就是afterUseLessPathList的索引
+	for key, _ := range recordSaveIndexSlice {
+		//记得判断一下key索引有可能是起点的情况 如果是起点就不添加，因为0 1 2三点都可以的话，0 和 2不成功 0会被添加进key
+		if key != 0 {
+			sortSlice = append(sortSlice, key)
+		}
+	}
+	//从小到大
+	sort.Ints(sortSlice)
+	for i := 0; i < len(sortSlice); i++ {
+		//mapManager.afterUseLessPathList[a] a就是recordSaveIndexSlice[i]索引值 sortSlice[i]不会出现起点0索引 前面key遍历的时候已经过滤掉了
+		mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.afterUseLessPathList[sortSlice[i]])
+	}
+	//添加终点
+	mapManager.FinalPathList = append(mapManager.FinalPathList, mapManager.afterUseLessPathList[len(mapManager.afterUseLessPathList)-1])
+}
+
+// 这个不用那么麻烦，直接从readySmoothPathNode的终点开始往上找到最后第一个能与终点直接相连的点，也就是说他是离终点最远的有效拐点
+// 因为上一步已经从起点开始做类似的操作了，由于A星贪心算法的尾部局限性，尾巴部分的路径可能会撞到墙然后走直线造成路径不是意义上的最短，所以要进行找倒数第二优拐点的操作
+// 明确一下 这个倒数第二优拐点一定是去重之后的2个拐点之间的点
+// 边界检查：上一步起点开始去重可能FinalPathList最低3个点
+func (mapManager *MapManager) findSecondToLastNode() {
+	var secondToLastNode *Node
+	secondToLastNodeIndexInReadySmoothPathList := 0
+	//先找这个倒数第二优拐点
+	//开始点是终点的前一个要长度-2 注意一下
+	for i := len(mapManager.readySmoothPathList) - 2; i >= 0; i-- {
+		//判断直线障碍 如果成功相连 继续往前判断
+		if mapManager.obstacleJudge(
+			mapManager.readySmoothPathList[len(mapManager.readySmoothPathList)-1],
+			mapManager.readySmoothPathList[i]) {
+			continue
+		} else {
+			//如果碰到第一个不相连的点，那么这个点的下一个点就是离终点最远的可能被遗漏的有效拐点 退出检索
+			//拿到这个点的下一个点并记录 有可能是终点 终点就不用了，相当于没有这个倒数第二优拐点，直接退出
+			if i+1 == len(mapManager.readySmoothPathList)-1 {
+				return
+			} else {
+				//如果不是终点 那么记录这个点的下一个点 这个点就是倒数第二优拐点 并记录在readySmoothPathList的索引值
+				secondToLastNode = mapManager.readySmoothPathList[i+1]
+				secondToLastNodeIndexInReadySmoothPathList = i + 1
+			}
+			break
+		}
+	}
+	if secondToLastNode == nil {
+		return
+	}
+	//这一步是想把之前的倒数第二优拐点 插入 插入 到同线的FinalPathList拐点里面
+	//双指针索引从后往前 索引来自FinalPathList(已经双指针从头开始优化过一遍的拐点)
+	//注意一下 这个双指针索引是FinalPathList里面的有效拐点索引
+	//startIndex是倒数第二个索引 endIndex是倒数第一 然后这2个指针一直往前移动 直到符合 或者 startIndex到第一个
+	//FinalPathList最低是3个点 0 拐点 终点
+	startIndex := len(mapManager.FinalPathList) - 2
+	endIndex := len(mapManager.FinalPathList) - 1
+	for {
+		//startIndex最后到头就退出了
+		if startIndex < 0 {
+			break
+		}
+		//判断secondToLastNode这个点是否在ReadySmoothPath中处于索引之间 这里一定一定要用ReadySmoothPath来判断 不能用afterUseLessPathList
+		if mapManager.isBetweenFinalPathInReadySmoothPath(
+			mapManager.FinalPathList[startIndex],
+			mapManager.FinalPathList[endIndex],
+			secondToLastNode,
+			secondToLastNodeIndexInReadySmoothPathList) {
+			//如果是 则他是离终点的第二优拐点 插入FinalPathList
+			mapManager.insertSliceElement(&mapManager.FinalPathList, secondToLastNode, endIndex)
+		} else {
+			//不断前移startIndex和endIndex
+			startIndex--
+			endIndex--
+		}
+	}
+
+}
+
+// 判断是否x3这个点是否在ReadySmoothPath中处于x1和x2之间 不需要共线 只需要判断ReadySmoothPath索引就行
+func (mapManager *MapManager) isBetweenFinalPathInReadySmoothPath(startNode, endNode, midNode *Node, midNodeIndex int) bool {
+	//首先这点不能是相同的判断点
+	if midNode == startNode || midNode == endNode {
+		return false
+	}
+	//这是给ReadySmoothPath用的
+	startIndex, endIndex := 0, 0
+	//遍历readySmoothPathList找到这3点的索引 一定能找到 因为midNode就是从readySmoothPathList来的
+	for i := 0; i < len(mapManager.readySmoothPathList); i++ {
+		if mapManager.readySmoothPathList[i] == startNode {
+			startIndex = i
+		}
+		if mapManager.readySmoothPathList[i] == endNode {
+			endIndex = i
+		}
+	}
+	//index是按顺序走的 直接对在readySmoothPathList的索引进行判断就行
+	if midNodeIndex > startIndex && midNodeIndex < endIndex {
+		return true
+	} else {
+		return false
+	}
+}
+
+// InsertIntSlice 创建一个初始切片
+// slice := []int{1, 2, 3, 4, 5}
+// 要插入的元素
+// element := 10
+// 插入的位置（索引）
+// index := 2
+// 调用方法插入元素
+// slice = InsertIntSlice(slice, element, index)
+// 打印结果
+// fmt.Println(slice) // 输出: [1 2 10 3 4 5]
+// InsertIntSlice 在指定位置插入元素，直接修改传入的切片
+// InsertIntSlice 在指定位置插入元素，直接修改传入的切片
+func (mapManager *MapManager) insertSliceElement(slice *[]*Node, element *Node, index int) {
+	if index < 0 || index > len(*slice) {
+		panic("index out of range")
+	}
+	// 1. 创建一个新的切片，容量足够容纳插入后的元素
+	newSlice := make([]*Node, 0, len(*slice)+1)
+	// 2. 先插入 part1
+	newSlice = append(newSlice, (*slice)[:index]...)
+	// 3. 插入目标元素
+	newSlice = append(newSlice, element)
+	// 4. 插入 part2
+	newSlice = append(newSlice, (*slice)[index:]...)
+	// 5. 将新切片赋值给原切片
+	*slice = newSlice
+}
+
+var sqrt5 = math.Sqrt(5)
+
 type printTimeToken struct {
-	ResetTimeCost int64
-	PathFindCost  int64
-	EndTime       int64
-	StartTime     int64
+	ResetTimeCost        int64
+	PathFindCost         int64
+	UseLessCost          int64
+	SetImportantNodeCost int64
+	SmoothBestWay        int64
+	EndTime              int64
+	StartTime            int64
 }
