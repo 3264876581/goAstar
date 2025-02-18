@@ -72,7 +72,8 @@ func main() {
 	manager.SetObstacle(2, 4)
 	manager.SetObstacle(3, 4)
 	manager.SetObstacle(4, 4)
-	if manager.PathFind(0, 0, 9, 9, false, true, false) {
+	if manager.PathFind(0, 0, 9, 9, true, true, true) {
+		fmt.Println("--loop manager.SmoothValType.SmoothFinalIndex and print manager.FinalPathList Node X,Y--")
 		for _, val := range manager.SmoothValType.SmoothFinalIndex {
 			fmt.Println("x:", manager.FinalPathList[val].X, "\ty:", manager.FinalPathList[val].Y)
 		}
