@@ -46,11 +46,14 @@ func main() {
 ```
 
 # Result
-manager.FinalPathList-----save Inflection node 
-
-manager.SmoothValType.SmoothFinalIndex -----save smallest cost index of manager.FinalPathList
 
 ![11](https://github.com/user-attachments/assets/a36c102b-2581-49f8-88fd-0dda398b52fe)
+
+manager.FinalPathList -> save Inflection node (there is 0 1 2 3)
+
+manager.SmoothValType.SmoothFinalIndex -> save smallest cost index of manager.FinalPathList (there is 0 1 3)
+
+![13](https://github.com/user-attachments/assets/e5c17b3c-e038-4279-bfdd-edcb6a29244d)
 
 
 you can judge PathFind flag(if success find) then loop SmoothFinalIndex like this to use smallest cost index in FinalPathList:
