@@ -13,6 +13,16 @@ manager.PathFind(0, 0, 9, 9, true, true, true)
 ```
 ![2](https://github.com/user-attachments/assets/32799ddc-4de8-4835-8c7c-0e220ff4218c)
 
+set Obstacle parms(x y) 
+```go
+manager.SetObstacle(0, 0)
+```
+
+set Road parms(x y)
+```go
+manager.SetRoad(0, 0)
+```
+
 ```go
 func main() {
 	var manager = DataMgr.NewMapManager(10, 10)
