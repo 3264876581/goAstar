@@ -1,4 +1,4 @@
-# Astar(Grid)
+![11](https://github.com/user-attachments/assets/ecb364cc-1d1b-45e4-b55b-21c8cd7953f4)# Astar(Grid)
 A fast(1k * 1k cost avg 1-2ms,10k * 10k cost avg 15ms)，smallest cost Astar search For moba，mmo game even for Autonomous driving and so on...
 # Easy Use
 build a map manager
@@ -84,9 +84,9 @@ func main() {
 
 # Test:1000*1000 map(unity map)
 
-green cube is obstalce,I scan this map by unity ray and then bulid a obstacle index json file to replace all obstacle cube:
+scan this map by unity ray and then create a obstacle index json file to replace all obstacle :
 
-![1](https://github.com/user-attachments/assets/9d072ccf-3409-478f-8e2a-c72b90130fc2)
+![134](https://github.com/user-attachments/assets/35d0d13b-21d8-49df-ad58-ba9d9cab03cd)
 
 
 obstacle json map is in MapData file,like this:
@@ -145,7 +145,8 @@ func main() {
 	//---------------------------------------load json Obstacle
 	loadObstacleJson()
 	//SetObstacle
-	if manager.PathFind(0, 0, 930, 910, true, true, true) {
+	if manager.PathFind(0, 0, 999, 999, true, true, true) {
+		fmt.Println("--loop manager.SmoothValType.SmoothFinalIndex and print manager.FinalPathList Node X,Y--")
 		for _, val := range manager.SmoothValType.SmoothFinalIndex {
 			fmt.Println("x:", manager.FinalPathList[val].X, "\ty:", manager.FinalPathList[val].Y)
 		}
@@ -154,22 +155,20 @@ func main() {
 ```
 result map(unity):
 
-![2](https://github.com/user-attachments/assets/030cf164-c7d5-45b4-aacd-c29cb5320f2f)
+![11](https://github.com/user-attachments/assets/cf7cc732-351d-4e1b-b240-ea1ce036269b)
 
 result map(go print):
 
-![dcd10e77-a5cb-4663-a17c-ca963993ad63](https://github.com/user-attachments/assets/bf67c48e-189c-41f3-88e4-0ae98b1ae941)
-![cb8bef9b-fbf1-4102-b5d1-531a727bc6a4](https://github.com/user-attachments/assets/89c289f6-2da4-4d97-b5a6-566e36c34313)
-![ca4fd4af-6215-498c-870e-1136399b2342](https://github.com/user-attachments/assets/ca21655f-bea6-4a4a-993e-922ff1fccc1f)
-![5ab63e1d-5ecd-4a31-a1e9-8e8e71d6dd4b](https://github.com/user-attachments/assets/0a6f8931-2be0-45be-80fc-b9f0e6a6b0b7)
-![9726f768-53ef-412e-ada8-36fc73e5d209](https://github.com/user-attachments/assets/e47c2786-8c60-40c0-94c0-66c73dd263f3)
-![315a72e1-578a-404d-bad2-6f8699b80106](https://github.com/user-attachments/assets/091a2cf9-d098-4776-ae4a-ef81b63c0529)
-![9e91af1f-3e20-4b8b-882d-562bcd1c62d6](https://github.com/user-attachments/assets/e0425280-0dae-44e7-a4af-c12ba4e89d30)
+![23309807-424b-4afd-b752-21701caf33f3](https://github.com/user-attachments/assets/4c9c0560-ba98-42c2-ab2c-a552eb0af7e3)
+![1816b973-d044-4d26-a59b-52e56b59474d](https://github.com/user-attachments/assets/1a00c33a-ac81-4876-b1b0-0c85ebc8c241)
+![8cf46501-7e7a-43fd-aab1-c027bc9fd308](https://github.com/user-attachments/assets/8e187ef2-0bd5-4fcd-afc1-5f65f2b1a31d)
+![461feb5a-8420-4a93-913d-4d9bcf4c1df1](https://github.com/user-attachments/assets/633a0ff2-34a7-401e-82b8-3aa539b5d17e)
+![6fffb1cd-79b1-4c57-a50f-f68c93abcb2b](https://github.com/user-attachments/assets/d187e370-5667-4e8b-8dcc-b6abed9287ff)
 
 
-print(smallest cost index)： 0 - 2 - 9 - 10 - 11
+print(smallest cost index)： 0 - 1 - 2 - 3 - 5
 
-![3](https://github.com/user-attachments/assets/4d0f7380-9429-4f49-aa34-81827c81b43b)
+![999](https://github.com/user-attachments/assets/6867feb7-a14e-4a42-a2d1-e83c24d824e6)
 
 
 # My Astar Rules
