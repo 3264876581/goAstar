@@ -22,7 +22,7 @@ var ObstacleIndexSlice = make([]ObstacleIndex, 0, 100000)
 // set Obstacle from json
 func loadObstacleJson(manager *DataMgr.MapManager) {
 	//read json obstacle
-	file, err := os.Open("./MapDataFile/mapObstacle_New.json")
+	file, err := os.Open("./MapDataFile/mapObstacle_500.json")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
