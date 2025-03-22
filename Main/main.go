@@ -11,17 +11,18 @@ import (
 var Json = jsoniter.ConfigCompatibleWithStandardLibrary // 使用兼容标准库的配置
 // ObstacleIndex json
 
-// set Obstacle from json
-var manager = DataMgr.NewMapManager(1000, 1000)
-
 type ObstacleIndex struct {
 	I int `json:"i"`
 	J int `json:"j"`
 }
 
-func loadObstacleJson() {
+var manager = DataMgr.NewMapManager(500, 500)
+var ObstacleIndexSlice = make([]ObstacleIndex, 0, 100000)
+
+// set Obstacle from json
+func loadObstacleJson(manager *DataMgr.MapManager) {
 	//read json obstacle
-	file, err := os.Open("MapData/mapObstacle_Test.json")
+	file, err := os.Open("./MapDataFile/mapObstacle_New.json")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
@@ -30,7 +31,7 @@ func loadObstacleJson() {
 	// real Obstacle json file
 	byteValue, _ := io.ReadAll(file)
 	// load Obstacle json by json-iterator
-	err = Json.Unmarshal(byteValue, &ObstacleIndexSlice)
+	err = json.Unmarshal(byteValue, &ObstacleIndexSlice)
 	if err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return
@@ -41,14 +42,11 @@ func loadObstacleJson() {
 	}
 }
 
-// ObstacleIndexSlice save json ObstacleIndex
-var ObstacleIndexSlice = make([]ObstacleIndex, 0, 100000)
-
 func main() {
-	//---------------------------------------load json Obstacle
-	loadObstacleJson()
-	//SetObstacle
-	if manager.PathFind(437, 428, 0, 0, true, true, true) {
+	//---------------------------------------load json Obstacle(set Obstacle index)
+	loadObstacleJson(manager)
+	//PathFind
+	if manager.PathFind(0, 0, 499, 499, true, true, true) {
 		for _, val := range manager.SmoothValType.SmoothFinalIndex {
 			fmt.Println("x:", manager.FinalPathList[val].X, "\ty:", manager.FinalPathList[val].Y)
 		}
