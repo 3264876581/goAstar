@@ -7,18 +7,18 @@ var manager = DataMgr.NewMapManager(1000, 1000)
 ```
 ![11](https://github.com/user-attachments/assets/d5bb2627-075f-417e-9178-79a3a9bda85c)
 
-findPath 
+execute PathFind(x1,y1,x2,y2,bool,bool,bool)
 ```go
 manager.PathFind(0, 0, 9, 9, true, true, true)
 ```
 ![2](https://github.com/user-attachments/assets/32799ddc-4de8-4835-8c7c-0e220ff4218c)
 
-set Obstacle parms(x y) 
+set Obstacle parms(xIndex, yIndex,int) 
 ```go
 manager.SetObstacle(0, 0)
 ```
 
-set Road parms(x y)
+set Road(can move) parms(xIndex, yIndex,int)
 ```go
 manager.SetRoad(0, 0)
 ```
