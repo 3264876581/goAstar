@@ -882,263 +882,252 @@ func (mapManager *MapManager) pathFind(x1, y1, x2, y2 int16) {
 	offsetX := int16(0)
 	offsetY := int16(0)
 	var f, g, h float32 = 0, 0, 0
-	for index, offset := range rangeOffset {
-		//may eight times
-		//{0, 1}right 		{0, -1}left 	 	 {-1, 0}up 	     	 {1, 0}down
-		//{-1, 1}right up 	{1, 1}right down 	 {-1, -1}left up 	 {1, -1}left down
-		f, g, h = 0, 0, 0
-		offsetX = x1 + offset[0]
-		offsetY = y1 + offset[1]
-		//judge boundary,map boundary
-		if offsetX >= 0 && offsetY >= 0 && offsetX < mapManager.rows && offsetY < mapManager.cols {
-			//already in openList or closedList or is wall
-			if mapManager.mapData[offsetX][offsetY].nodeType == 1 || mapManager.mapData[offsetX][offsetY].open || mapManager.mapData[offsetX][offsetY].closed {
-				continue
-			}
-			//not start node
-			if offsetX == mapManager.startNodeX && offsetY == mapManager.startNodeY {
-				continue
-			}
-			//
-			//if k=-1/1,judge 2 obstacle around of 4 status,if have 1 obstacle,continue
-			if index >= 4 {
-				//判断4个八向的斜向 如果经过有1个障碍 那么不是偏移点 直接continue下一个
-				switch index {
-				case 4:
-					//! OFFSET
-					//F !
-					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
-						continue
-					}
-					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
-						continue
-					}
-				case 5:
-					//F !
-					//! OFFSET
-					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
-						continue
-					}
-					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
-						continue
-					}
-				case 6:
-					//OFFSET !
-					//!      F
-					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
-						continue
-					}
-					if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
-						continue
-					}
-				case 7:
-					//!      F
-					//OFFSET !
-					if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
-						continue
-					}
-					if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
-						continue
-					}
+	for {
+		for index, offset := range rangeOffset {
+			//may eight times
+			//{0, 1}right 		{0, -1}left 	 	 {-1, 0}up 	     	 {1, 0}down
+			//{-1, 1}right up 	{1, 1}right down 	 {-1, -1}left up 	 {1, -1}left down
+			f, g, h = 0, 0, 0
+			offsetX = x1 + offset[0]
+			offsetY = y1 + offset[1]
+			//judge boundary,map boundary
+			if offsetX >= 0 && offsetY >= 0 && offsetX < mapManager.rows && offsetY < mapManager.cols {
+				//already in openList or closedList or is wall
+				if mapManager.mapData[offsetX][offsetY].nodeType == 1 || mapManager.mapData[offsetX][offsetY].open || mapManager.mapData[offsetX][offsetY].closed {
+					continue
 				}
-				//1.41
-				g += math.Sqrt2
-			} else {
-				//4个八向的平向 不用判断直接加代价就行
-				g += 1
-			}
-			//------16向分割
-			//if index >= 4 {
-			//	//判断8个十六向 如果经过有1个障碍 那么不是偏移点 直接continue下一个
-			//	switch index {
-			//	//感叹号是障碍
-			//	case 4:
-			//		//OFFSET !	   *
-			//		//*      !     F
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY+1) {
-			//			continue
-			//		}
-			//	case 5:
-			//		//OFFSET *
-			//		//!	 	 !
-			//		//* 	 F
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY+1) {
-			//			continue
-			//		}
-			//	case 6:
-			//		//*   OFFSET
-			//		//!      !
-			//		//F		 *
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY-1) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
-			//			continue
-			//		}
-			//	case 7:
-			//		//*  ! OFFSET
-			//		//F  !	 *
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY-1) {
-			//			continue
-			//		}
-			//	case 8:
-			//		//F  !   *
-			//		//*  ! OFFSET
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY-1) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
-			//			continue
-			//		}
-			//	case 9:
-			//		//F      *
-			//		//!      !
-			//		//*	   OFFSET
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY-1) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
-			//			continue
-			//		}
-			//	case 10:
-			//		//  *      F
-			//		//  !      !
-			//		//OFFSET   *
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY+1) {
-			//			continue
-			//		}
-			//	case 11:
-			//		//  *  	  !     F
-			//		//OFFSET  !   	*
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
-			//			continue
-			//		}
-			//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY+1) {
-			//			continue
-			//		}
-			//	}
-			//	//sqrt5 = 2.236
-			//	g += sqrt5
-			//} else {
-			//	g += 1
-			//}
-			//g += 1
-			//判断偏移点是不是障碍点
-			if mapManager.mapData[offsetX][offsetY].nodeType == 0 {
-				//g from this center node(offset father)
-				g += mapManager.mapData[x1][y1].g
-				//h from this offset node to end
-				//h = float32(math.Abs(float64(x2-offsetX)) + math.Abs(float64(y2-offsetY)))
-				h = float32(mapManager.diagonalDistance(x2, y2, offsetX, offsetY))
-				h += float32(mapManager.mapData[offsetX][offsetY].nodeRoadNum)
-				//cross := mapManager.CalculateCross(
-				//	mapManager.mapData[offsetX][offsetY],
-				//	mapManager.mapData[mapManager.startNodeX][mapManager.startNodeY],
-				//	mapManager.mapData[x2][y2])
-				//weight := mapManager.CalculateWeight(
-				//	mapManager.mapData[offsetX][offsetY],
-				//	mapManager.mapData[mapManager.startNodeX][mapManager.startNodeY],
-				//	mapManager.mapData[x2][y2], 0.7)
-				// 调整路径反向偏离程度
-				//deviation := mapManager.AdjustPathDeviation(cross, weight, 0.1)
-				//h = h + cross*0.001
-				//h = h + deviation
-				//calculate f = g + h
-				//h越大 代表g越不重要，说明越靠近终点的点 就是这个路径上的点，越贪心越快
-				f = g + 1*h
-				//save f,g,h
-				mapManager.mapData[offsetX][offsetY].f = f
-				mapManager.mapData[offsetX][offsetY].g = g
-				mapManager.mapData[offsetX][offsetY].h = h
-				//save father node
-				mapManager.mapData[offsetX][offsetY].father = mapManager.mapData[x1][y1]
-				//Push Push Push Push
-				Push(&mapManager.openList, mapManager.mapData[offsetX][offsetY])
-				mapManager.mapData[offsetX][offsetY].open = true
-				//查看多少节点被检测了
-				//mapManager.judgeList = append(mapManager.judgeList, mapManager.mapData[offsetX][offsetY])
-				//if is end node
-				if offsetX == x2 && offsetY == y2 {
-					//add End node into pathList
-					//mapManager.pathList = append(mapManager.pathList, mapManager.mapData[x2][y2])
-					mapManager.readySmoothPathList = append(mapManager.readySmoothPathList, mapManager.mapData[x2][y2])
-					//add into closeList
-					mapManager.closeList = append(mapManager.closeList, mapManager.mapData[x2][y2])
-					//find path from closeList End node father
-					mapManager.closePathIndex = len(mapManager.closeList) - 1
-					var fatherNode = mapManager.closeList[mapManager.closePathIndex].father
-					for {
-						if fatherNode != nil {
-							//mapManager.pathList = append(mapManager.pathList, fatherNode)
-							mapManager.readySmoothPathList = append(mapManager.readySmoothPathList, fatherNode)
-							fatherNode = fatherNode.father
-						} else {
-							//fmt.Println("success find path!")
-							//var time1 = time.Now().UnixMicro()
-							//reverseSlice(mapManager.pathList)
-							reverseSlice(&mapManager.readySmoothPathList)
-							//mapManager.pathList assign to readySmoothPathList
-							//copy(mapManager.readySmoothPathList, mapManager.pathList)
-							//var time2 = time.Now().UnixMicro()
-							//fmt.Println("reverseSlice time 微秒: ", time2-time1)
-							//
-							for _, val := range mapManager.readySmoothPathList {
-								//fmt.Println(index, " -> ", " x: ", val.x, " y: ", val.y, " nodeType: ", val.nodeType)
-								mapManager.printPathList[val.X][val.Y] = "*"
+				//not start node
+				if offsetX == mapManager.startNodeX && offsetY == mapManager.startNodeY {
+					continue
+				}
+				//
+				//if k=-1/1,judge 2 obstacle around of 4 status,if have 1 obstacle,continue
+				if index >= 4 {
+					//判断4个八向的斜向 如果经过有1个障碍 那么不是偏移点 直接continue下一个
+					switch index {
+					case 4:
+						//! OFFSET
+						//F !
+						if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+							continue
+						}
+						if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+							continue
+						}
+					case 5:
+						//F !
+						//! OFFSET
+						if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+							continue
+						}
+						if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+							continue
+						}
+					case 6:
+						//OFFSET !
+						//!      F
+						if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+							continue
+						}
+						if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+							continue
+						}
+					case 7:
+						//!      F
+						//OFFSET !
+						if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+							continue
+						}
+						if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+							continue
+						}
+					}
+					//1.41
+					g += math.Sqrt2
+				} else {
+					//4个八向的平向 不用判断直接加代价就行
+					g += 1
+				}
+				//------16向分割
+				//if index >= 4 {
+				//	//判断8个十六向 如果经过有1个障碍 那么不是偏移点 直接continue下一个
+				//	switch index {
+				//	//感叹号是障碍
+				//	case 4:
+				//		//OFFSET !	   *
+				//		//*      !     F
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY+1) {
+				//			continue
+				//		}
+				//	case 5:
+				//		//OFFSET *
+				//		//!	 	 !
+				//		//* 	 F
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY+1) {
+				//			continue
+				//		}
+				//	case 6:
+				//		//*   OFFSET
+				//		//!      !
+				//		//F		 *
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY-1) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY) {
+				//			continue
+				//		}
+				//	case 7:
+				//		//*  ! OFFSET
+				//		//F  !	 *
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX+1, offsetY-1) {
+				//			continue
+				//		}
+				//	case 8:
+				//		//F  !   *
+				//		//*  ! OFFSET
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY-1) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY-1) {
+				//			continue
+				//		}
+				//	case 9:
+				//		//F      *
+				//		//!      !
+				//		//*	   OFFSET
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY-1) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+				//			continue
+				//		}
+				//	case 10:
+				//		//  *      F
+				//		//  !      !
+				//		//OFFSET   *
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY+1) {
+				//			continue
+				//		}
+				//	case 11:
+				//		//  *  	  !     F
+				//		//OFFSET  !   	*
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX, offsetY+1) {
+				//			continue
+				//		}
+				//		if !mapManager.checkBoundaryAndObstacle(offsetX-1, offsetY+1) {
+				//			continue
+				//		}
+				//	}
+				//	//sqrt5 = 2.236
+				//	g += sqrt5
+				//} else {
+				//	g += 1
+				//}
+				//g += 1
+				//判断偏移点是不是障碍点
+				if mapManager.mapData[offsetX][offsetY].nodeType == 0 {
+					//g from this center node(offset father)
+					g += mapManager.mapData[x1][y1].g
+					//h from this offset node to end
+					//h = float32(math.Abs(float64(x2-offsetX)) + math.Abs(float64(y2-offsetY)))
+					h = float32(mapManager.diagonalDistance(x2, y2, offsetX, offsetY))
+					h += float32(mapManager.mapData[offsetX][offsetY].nodeRoadNum)
+					//cross := mapManager.CalculateCross(
+					//	mapManager.mapData[offsetX][offsetY],
+					//	mapManager.mapData[mapManager.startNodeX][mapManager.startNodeY],
+					//	mapManager.mapData[x2][y2])
+					//weight := mapManager.CalculateWeight(
+					//	mapManager.mapData[offsetX][offsetY],
+					//	mapManager.mapData[mapManager.startNodeX][mapManager.startNodeY],
+					//	mapManager.mapData[x2][y2], 0.7)
+					// 调整路径反向偏离程度
+					//deviation := mapManager.AdjustPathDeviation(cross, weight, 0.1)
+					//h = h + cross*0.001
+					//h = h + deviation
+					//calculate f = g + h
+					//h越大 代表g越不重要，说明越靠近终点的点 就是这个路径上的点，越贪心越快
+					f = g + 1*h
+					//save f,g,h
+					mapManager.mapData[offsetX][offsetY].f = f
+					mapManager.mapData[offsetX][offsetY].g = g
+					mapManager.mapData[offsetX][offsetY].h = h
+					//save father node
+					mapManager.mapData[offsetX][offsetY].father = mapManager.mapData[x1][y1]
+					//Push Push Push Push
+					Push(&mapManager.openList, mapManager.mapData[offsetX][offsetY])
+					mapManager.mapData[offsetX][offsetY].open = true
+					//查看多少节点被检测了
+					//mapManager.judgeList = append(mapManager.judgeList, mapManager.mapData[offsetX][offsetY])
+					//if is end node
+					if offsetX == x2 && offsetY == y2 {
+						//add End node into pathList
+						//mapManager.pathList = append(mapManager.pathList, mapManager.mapData[x2][y2])
+						mapManager.readySmoothPathList = append(mapManager.readySmoothPathList, mapManager.mapData[x2][y2])
+						//add into closeList
+						mapManager.closeList = append(mapManager.closeList, mapManager.mapData[x2][y2])
+						//find path from closeList End node father
+						mapManager.closePathIndex = len(mapManager.closeList) - 1
+						var fatherNode = mapManager.closeList[mapManager.closePathIndex].father
+						for {
+							if fatherNode != nil {
+								//mapManager.pathList = append(mapManager.pathList, fatherNode)
+								mapManager.readySmoothPathList = append(mapManager.readySmoothPathList, fatherNode)
+								fatherNode = fatherNode.father
+							} else {
+								//fmt.Println("success find path!")
+								//var time1 = time.Now().UnixMicro()
+								//reverseSlice(mapManager.pathList)
+								reverseSlice(&mapManager.readySmoothPathList)
+								//mapManager.pathList assign to readySmoothPathList
+								//copy(mapManager.readySmoothPathList, mapManager.pathList)
+								//var time2 = time.Now().UnixMicro()
+								//fmt.Println("reverseSlice time 微秒: ", time2-time1)
+								//
+								for _, val := range mapManager.readySmoothPathList {
+									//fmt.Println(index, " -> ", " x: ", val.x, " y: ", val.y, " nodeType: ", val.nodeType)
+									mapManager.printPathList[val.X][val.Y] = "*"
+								}
+								mapManager.printPathList[mapManager.startNodeX][mapManager.startNodeY] = "S"
+								mapManager.printPathList[x2][y2] = "E"
+								//set pathFindFlag true,success find path
+								mapManager.pathFindFlag = true
+								return
 							}
-							mapManager.printPathList[mapManager.startNodeX][mapManager.startNodeY] = "S"
-							mapManager.printPathList[x2][y2] = "E"
-							//set pathFindFlag true,success find path
-							mapManager.pathFindFlag = true
-							return
 						}
 					}
 				}
 			}
 		}
+		if len(mapManager.openList) > 0 {
+			//add latest node into closeList from openList,remove latest node from openList,set flag
+			//Pop Pop Pop Pop
+			node = Pop(&mapManager.openList)
+			node.open = false
+			node.closed = true
+			mapManager.closeList = append(mapManager.closeList, node)
+			//recursion pathFind method,start is closeList latest node
+			x1 = mapManager.closeList[len(mapManager.closeList)-1].X
+			y1 = mapManager.closeList[len(mapManager.closeList)-1].Y
+			continue
+			//mapManager.pathFind(mapManager.closeList[len(mapManager.closeList)-1].X, mapManager.closeList[len(mapManager.closeList)-1].Y, x2, y2)
+		} else {
+			//if not node in openList now
+			fmt.Println("openList is empty, no way find!")
+			return
+		}
 	}
-	///len >0 && openListChangeFlag
-	//if mapManager.openListChangeFlag {
-	//	SortTime1 = time.Now().UnixMicro()
-	//	//slices.so
-	//	//sort openList
-	//	sort.Slice(mapManager.openList, func(i, j int) bool {
-	//		return mapManager.openList[i].f > mapManager.openList[j].f
-	//	})
-	//	//
-	//	SortTime2 = time.Now().UnixMicro()
-	//	SortTime += SortTime2 - SortTime1
-	//}
-	if len(mapManager.openList) > 0 {
-		//add latest node into closeList from openList,remove latest node from openList,set flag
-		//mapManager.openList[len(mapManager.openList)-1].open = false
-		//mapManager.openList[len(mapManager.openList)-1].closed = true
-		//mapManager.closeList = append(mapManager.closeList, mapManager.openList[len(mapManager.openList)-1])
-		//mapManager.openList = mapManager.openList[:len(mapManager.openList)-1]
-		//Pop Pop Pop Pop
-		node = Pop(&mapManager.openList)
-		node.open = false
-		node.closed = true
-		mapManager.closeList = append(mapManager.closeList, node)
-		//recursion pathFind method,start is closeList latest node
-		mapManager.pathFind(mapManager.closeList[len(mapManager.closeList)-1].X, mapManager.closeList[len(mapManager.closeList)-1].Y, x2, y2)
-	} else {
-		//if not node in openList now
-		fmt.Println("openList is empty, no way find!")
-	}
-	return
 }
 
 // CalculateWeight 计算当前节点的权重因子
