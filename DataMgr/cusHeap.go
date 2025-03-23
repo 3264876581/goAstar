@@ -65,11 +65,21 @@ func BuildSmallestHeap(arr *[]*Node) {
 		down(arr, len(*arr), i)
 	}
 }
-
-//// SortSmallestHeap 排序小根堆
-//func SortSmallestHeap(arr *[]int) {
-//
-//}
+// SortSmallestHeap 排序小根堆 override slice from large to small
+func SortSmallestHeap(arr *[]*Node) {
+	//1.从最后一个父节点((长度-1-1)/2)开始向上遍历构建部分堆，最终组成小根堆
+	for i := (len(*arr) - 1 - 1) / 2; i >= 0; i-- {
+		//2.调用down方法，构建部分堆
+		down(arr, len(*arr), i)
+	}
+	//2.交换首尾元素，并且遍历下沉根元素,循环从最后一个索引开始，方便交换
+	for i := len(*arr) - 1; i >= 0; i-- {
+		//3.交换首尾元素
+		Swap(arr, 0, i)
+		//4.下沉根元素，长度是不断缩小的i
+		down(arr, i, 0)
+	}
+}
 
 // Pop 记得外部判断长度是否大于0，大于才pop,否则报错
 func Pop(arr *[]*Node) *Node {
