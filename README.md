@@ -57,7 +57,7 @@ manager.SmoothValType.SmoothFinalIndex (there is 0 1 3) -> save smallest cost in
 ![13](https://github.com/user-attachments/assets/e5c17b3c-e038-4279-bfdd-edcb6a29244d)
 
 
-you can judge PathFind flag(if success find) then loop SmoothFinalIndex like this to use smallest cost index in FinalPathList:
+you can judge PathFind return bool flag(if success find) then loop SmoothFinalIndex like this to use smallest cost index in FinalPathList:
 
 ```go
 
