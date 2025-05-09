@@ -83,7 +83,7 @@ func main() {
 ```
 ![15](https://github.com/user-attachments/assets/aca0d0bc-39aa-4b41-b86d-c6310fb32c97)
 
-# Test:100*100 map(unity map) -> 500*500 map (search in server map):maximum error is 0.1*√2
+# Test:100 * 100 map(unity map) -> 500 * 500 map (search in server map):maximum error is 0.1*√2
 
 scan this map by unity ray and then create a obstacle index json file to replace all obstacle :
 
