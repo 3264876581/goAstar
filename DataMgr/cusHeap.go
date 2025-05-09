@@ -81,7 +81,7 @@ func SortSmallestHeap(arr *[]*Node) {
 	}
 }
 
-// Pop 记得外部判断长度是否大于0，大于才pop,否则报错
+// Pop 记得外部判断长度是否大于0，大于才pop,小于的话自己判断调不调用
 func Pop(arr *[]*Node) *Node {
 	//赋值弹出的元素
 	popEle := (*arr)[0]
