@@ -89,6 +89,10 @@ scan this 100 * 100 unity map by unity ray and then create a 500 * 500 obstacle 
 
 ![134](https://github.com/user-attachments/assets/35d0d13b-21d8-49df-ad58-ba9d9cab03cd)
 
+![11](https://github.com/user-attachments/assets/18b68fc9-b675-4626-aac6-44bba4e18bf6)
+
+![22](https://github.com/user-attachments/assets/208436cc-4c92-4e64-82b4-142a96c770fb)
+
 
 obstacle json map is in MapData file,like this:
 
