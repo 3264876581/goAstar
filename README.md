@@ -89,6 +89,8 @@ scan this 100 * 100 unity map by unity ray and then create a 500 * 500 obstacle 
 
 ![134](https://github.com/user-attachments/assets/35d0d13b-21d8-49df-ad58-ba9d9cab03cd)
 
+unity scan map code:
+
 ![11](https://github.com/user-attachments/assets/18b68fc9-b675-4626-aac6-44bba4e18bf6)
 
 （ ）is unity index, [ ] is server index, so if unity from (0,0) to (1,1) is obstacle, scan to server map,server map from [0,0] to [4,4] is obstacle(you can use obstacle json to load in server)
