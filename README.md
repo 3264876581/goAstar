@@ -93,7 +93,7 @@ unity scan map code:
 
 ![11](https://github.com/user-attachments/assets/18b68fc9-b675-4626-aac6-44bba4e18bf6)
 
-（ ）is unity index, [ ] is server index, so if unity from (0,0) to (1,1) is obstacle, scan to server map,server map from [0,0] to [4,4] is obstacle(you can use obstacle json to load in server)
+（ ）is unity index, [ ] is server index, so if unity from (0,0) to (1,1) is obstacle, scan to server map，so server map from [0,0] to [4,4] is obstacle(you can use obstacle json to load in server)
 ![22](https://github.com/user-attachments/assets/208436cc-4c92-4e64-82b4-142a96c770fb)
 
 
