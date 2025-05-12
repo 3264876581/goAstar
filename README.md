@@ -1,5 +1,5 @@
 # Astar(Grid)
-A fast(1k * 1k map default H to find largest length cost between 8ms,smaller length cost 1-2ms) shortest road point result， For Moba，MMO game even for Autonomous driving.
+A fast(1k * 1k map default H to find largest length cost between 8ms,smaller length cost 1-2ms) ，shortest road point result， For Moba，MMO game even for Autonomous driving.
 
 # Easy Use
 1. build a map manager
