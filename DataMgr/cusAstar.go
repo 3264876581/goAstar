@@ -9,7 +9,7 @@ import (
 )
 
 type Node struct {
-	X, Y        int16   // 小于 2000，可以用 uint16（2 字节）
+	X, Y        int16   // 小于 2000，可以用 int16（2 字节）
 	nodeType    uint8   // 0 或 1，可以用 uint8（1 字节）
 	nodeRoadNum int8    // 小于 100，可以用 int8（1 字节）
 	f, g, h     float32 // 降为 float32（4 字节）
