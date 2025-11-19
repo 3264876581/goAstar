@@ -83,15 +83,8 @@ func SortSmallestHeap(arr *[]*Node) {
 
 // Pop 记得外部判断长度是否大于0，大于才pop,小于的话自己判断调不调用
 func Pop(arr *[]*Node) *Node {
-	//赋值弹出的元素
+	//1.赋值弹出的元素
 	popEle := (*arr)[0]
-	//1.判断数组长度小于等于2，外部已经判断过是否大于0了
-	if len(*arr) <= 2 {
-		//3.删除尾部元素
-		*arr = (*arr)[:len(*arr)-1]
-		//2.如果数组长度为1，直接返回第一个元素
-		return popEle
-	}
 	//2.赋值头部元素给要弹出的元素，交换首尾元素
 	Swap(arr, 0, len(*arr)-1)
 	//3.删除尾部元素
