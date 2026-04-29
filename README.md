@@ -1,5 +1,4 @@
-# Astar(Grid)
-A fast(1k * 1k map default H to find largest length cost between 8ms,smaller length cost 1-2ms) ，shortest road point result， For Moba，MMO game even for Autonomous driving.
+#Name :Dynamic ray cast memory path find
 
 # Author 张
 report question -- e-mail:3264876581@qq.com ， QQ:3264876581 ，phone:15986466744
