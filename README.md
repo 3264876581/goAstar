@@ -5,6 +5,9 @@ report question -- e-mail:3264876581@qq.com ， QQ:3264876581 ，phone:159864667
 
 # Just Run（New）
 下载并打开go和unity文件后，本地直接运行查看寻路演示
+路径预览:
+
+<img width="1124" height="898" alt="253d30eb56f2db381e9c3d29458365ed" src="https://github.com/user-attachments/assets/d571ae36-cbcc-4010-8391-c95e6d069873" />
 
 # Easy Use（Old）
 1. build a map manager
