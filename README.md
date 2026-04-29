@@ -3,7 +3,10 @@
 # Author 张
 report question -- e-mail:3264876581@qq.com ， QQ:3264876581 ，phone:15986466744
 
-# Easy Use
+# Just Run（New）
+下载并打开go和unity文件后，本地直接运行查看寻路演示
+
+# Easy Use（Old）
 1. build a map manager
 ```go
 var manager = DataMgr.NewMapManager(1000, 1000)
