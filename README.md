@@ -1,7 +1,7 @@
 #Name :Dynamic ray cast memory path find
 
 # Author 张
-report question -- e-mail:3264876581@qq.com ， QQ:3264876581 ，phone:15986466744
+report question -- e-mail:3264876581@qq.com ， QQ:3264876581
 
 # Run Unity client and go server （New）
 下载并打开go和unity文件后，本地直接运行查看寻路演示
