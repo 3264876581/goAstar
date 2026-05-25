@@ -1147,12 +1147,12 @@ func (m *Map) setDynamicRayCast_NodeNeighbor_Info(node *Node) {
 
 // 查看节点邻居是否是墙 与运算
 func (node *Node) checkNeighbor_IsMapNode(neighborIndex int) bool {
-	return (1<<neighborIndex)&node.neighborIsMapNode != 0 //很傻逼 右边是位运算一定要先加括号
+	return ((1 << neighborIndex) & node.neighborIsMapNode) != 0
 }
 
 // 查看节点邻居是否是墙 与运算
 func (node *Node) checkNeighbor_IsWall(neighborIndex int) bool {
-	return (1<<neighborIndex)&node.neighborIsObstacle != 0 //很傻逼 右边是位运算一定要先加括号
+	return ((1 << neighborIndex) & node.neighborIsObstacle) != 0
 }
 
 // SetImpBTAWall 设置某个节点为墙
@@ -1190,7 +1190,7 @@ func (m *Map) isMapNode(x, y int) bool {
 
 // DRA专用 检查当前索引是否是墙 --使用位图
 func (m *Map) isWall_DynamicRayPathFind(x, y int) bool {
-	return m.Nodes_BitMap[x][y/8]&(128>>(y%8)) != 0 //不为0代表该位是1 1代表障碍 返回true
+	return (m.Nodes_BitMap[x][y/8] & (128 >> (y % 8))) != 0 //不为0代表该位是1 1代表障碍 返回true
 }
 
 // ---------------------------------------Node
@@ -1236,7 +1236,7 @@ func (node *Node) clearOpen_Close_Parent_SignFlag() {
 
 // IsWall 检查节点是否是墙
 func (node *Node) IsWall() bool {
-	return node.IsPOCWOC&Bit2 != 0 //0b 00000100
+	return (node.IsPOCWOC & Bit2) != 0 //0b 00000100
 }
 
 func (node *Node) IsRoad() bool {
@@ -1245,32 +1245,32 @@ func (node *Node) IsRoad() bool {
 
 // 检查节点是否在开启列表 (暂时给Jps使用 错误的示范 后面再改吧)
 func (node *Node) isUsedToInOpenList() bool {
-	return node.IsPOCWOC&Bit1 != 0 //0b 00000010
+	return (node.IsPOCWOC & Bit1) != 0 //0b 00000010
 }
 
 // 检查节点当前是否在开启列表
 func (node *Node) isInOpenList1() bool {
-	return node.IsPOCWOC&Bit1 != 0 //0b 00000010
+	return (node.IsPOCWOC & Bit1) != 0 //0b 00000010
 }
 
 // 检查节点当前是否在关闭列表
 func (node *Node) isInCloseList1() bool {
-	return node.IsPOCWOC&Bit0 != 0 //0b 00000001
+	return (node.IsPOCWOC & Bit0) != 0 //0b 00000001
 }
 
 // 检查节点当前是否在开启列表
 func (node *Node) isInOpenList2() bool {
-	return node.IsPOCWOC&Bit4 != 0 //0b 00010000
+	return (node.IsPOCWOC & Bit4) != 0 //0b 00010000
 }
 
 // 检查节点当前是否在关闭列表
 func (node *Node) isInCloseList2() bool {
-	return node.IsPOCWOC&Bit3 != 0 //0b 00001000
+	return (node.IsPOCWOC & Bit3) != 0 //0b 00001000
 }
 
 // 检查节点当前是否在有父节点
 func (node *Node) hasParent() bool {
-	return node.IsPOCWOC&Bit5 != 0 //0b 00001000
+	return (node.IsPOCWOC & Bit5) != 0 //0b 00001000
 }
 
 // 检查节点是否在关闭列表 不需要了
@@ -1791,7 +1791,7 @@ func (m *Map) doHMayEndPointBitJumpNode(MStartThenChangeX, MStartThenChangeY int
 					} else { //终点强制邻居不在open 也就是第一次被发现 但是跳点是斜向点本身 不是强制邻居 所以返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                          //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
+				} else { //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
 					if jumpNode.isInOpenList1() { //终点在open 尝试fix 停止查找
 						m.fixRayCastNode_InOpen_New(jumpNode, fatherNode)
 					} else { //跳点不在open也不在close 找到有效跳点
@@ -1825,13 +1825,13 @@ func (m *Map) doHMayEndPointBitJumpNode(MStartThenChangeX, MStartThenChangeY int
 						} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 							return nil, true
 						}
-					} else {                          //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
+					} else { //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
 						if jumpNode.isInOpenList1() { //跳点在open 尝试fix 跳过该点 继续下一个
 							m.fixRayCastNode_InOpen_New(jumpNode, fatherNode)
 							realP, realN = false, false //重置找到跳点标志
 						} else if jumpNode.isInCloseList1() { //跳点在close 跳过
 							realP, realN = false, false //重置找到跳点标志
-						} else {            //跳点不在open也不在close 找到有效跳点
+						} else { //跳点不在open也不在close 找到有效跳点
 							if deltaY > 0 { //原方向 右
 								if realP {
 									newMoveDir |= Bit1 | Bit5 //右下
@@ -1884,7 +1884,7 @@ func (m *Map) doVMayEndPointBitJumpNode(MStartThenChangeX, MStartThenChangeY int
 					} else { //终点强制邻居不在open 也就是第一次被发现 但是跳点是斜向点本身 不是强制邻居 所以返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                          //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
+				} else { //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
 					if jumpNode.isInOpenList1() { //终点在open 尝试fix 停止查找
 						m.fixRayCastNode_InOpen_New(jumpNode, fatherNode)
 					} else { //跳点不在open也不在close 找到有效跳点
@@ -1919,13 +1919,13 @@ func (m *Map) doVMayEndPointBitJumpNode(MStartThenChangeX, MStartThenChangeY int
 						} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 							return nil, true
 						}
-					} else {                          //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
+					} else { //父节点不是斜向点 父节点是一级源点 父节点必定处于close中
 						if jumpNode.isInOpenList1() { //跳点在open 尝试fix 跳过该点 继续下一个
 							m.fixRayCastNode_InOpen_New(jumpNode, fatherNode)
 							realP, realN = false, false //重置找到跳点标志
 						} else if jumpNode.isInCloseList1() { //跳点在close 跳过
 							realP, realN = false, false //重置找到跳点标志
-						} else {            //跳点不在open也不在close 找到有效跳点
+						} else { //跳点不在open也不在close 找到有效跳点
 							if deltaX > 0 { //原方向 下
 								if realP {
 									newMoveDir |= Bit2 | Bit5 //右下
@@ -2133,7 +2133,7 @@ func (m *Map) get_Right_HorizontalRealJumpPoint(availableP, availableN, fatherIs
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                          //回溯
 						m.reset_Right_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2209,7 +2209,7 @@ func (m *Map) get_Right_HorizontalRealJumpPoint(availableP, availableN, fatherIs
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                          //回溯
 						m.reset_Right_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2283,7 +2283,7 @@ func (m *Map) get_Right_HorizontalRealJumpPoint(availableP, availableN, fatherIs
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                          //回溯
 						m.reset_Right_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2405,7 +2405,7 @@ func (m *Map) get_Left_HorizontalRealJumpPoint(availableP, availableN, fatherIsD
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                         //回溯
 						m.reset_Left_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2481,7 +2481,7 @@ func (m *Map) get_Left_HorizontalRealJumpPoint(availableP, availableN, fatherIsD
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                         //回溯
 						m.reset_Left_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2555,7 +2555,7 @@ func (m *Map) get_Left_HorizontalRealJumpPoint(availableP, availableN, fatherIsD
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                         //回溯
 						m.reset_Left_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2681,7 +2681,7 @@ func (m *Map) get_Down_VerticalRealJumpPoint(availableP, availableN, fatherIsDia
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                         //回溯
 						m.reset_Down_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2757,7 +2757,7 @@ func (m *Map) get_Down_VerticalRealJumpPoint(availableP, availableN, fatherIsDia
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                         //回溯
 						m.reset_Down_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2831,7 +2831,7 @@ func (m *Map) get_Down_VerticalRealJumpPoint(availableP, availableN, fatherIsDia
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                         //回溯
 						m.reset_Down_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -2954,7 +2954,7 @@ func (m *Map) get_Up_VerticalRealJumpPoint(availableP, availableN, fatherIsDiago
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                       //回溯
 						m.reset_Up_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -3030,7 +3030,7 @@ func (m *Map) get_Up_VerticalRealJumpPoint(availableP, availableN, fatherIsDiago
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                       //回溯
 						m.reset_Up_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -3104,7 +3104,7 @@ func (m *Map) get_Up_VerticalRealJumpPoint(availableP, availableN, fatherIsDiago
 					} else { //否则强制邻居生效 但是跳点是斜向点本身 不是强制邻居 返回nil,找到有效强制邻居true
 						return nil, true
 					}
-				} else {                             //父节点是第一级源点 那么父节点必定处于close中
+				} else { //父节点是第一级源点 那么父节点必定处于close中
 					if temJumpNode.isInOpenList1() { //跳点处于open 回溯当前跳点 跳过
 						m.fixRayCastNode_InOpen_New(temJumpNode, fatherNode)                                                                                                                                                                       //回溯
 						m.reset_Up_TemData(temJumpNode, &fatherX, &fatherY, &bitStartIndex, &mayEndPointLoopTimes, &loopTimes, &nowBitN, &nowBitM, &nowBitP, &PLastIsObstacle, &NLastIsObstacle, &mayFindJumpNode, availableN, availableP, bitMap) //重置
@@ -4576,13 +4576,13 @@ func (m *Map) clear_BitMap(slice *[]int, bitMap []byte) {
 func (m *Map) checkSame_BitMap(id int, bitMap []byte) bool {
 	bitIndex, bitRightDownOffset := id/8, id%8 //相对于 n >>3  , n & 7(0b00000111)
 	//println(id, "\t", bitIndex)
-	return 128>>bitRightDownOffset&bitMap[bitIndex] != 0 //不等于0代表有记录 属于同一个--也就是有记忆
+	return (128 >> bitRightDownOffset & bitMap[bitIndex]) != 0 //不等于0代表有记录 属于同一个--也就是有记忆
 }
 
 // 边判断临时位图不重复边记录 把位图每1位当做0到正整数不重复顺序排列 01234567,8910....
 func (m *Map) SetSame_BitMap(id int, slice *[]int, bitMap []byte) {
-	bitIndex, bitRightDownOffset := id/8, id%8         //相对于 n >>3  , n & 7(0b00000111)
-	if 128>>bitRightDownOffset&bitMap[bitIndex] == 0 { //等于0代表之前没有记忆 那么是不重复的点 需要添加记录
+	bitIndex, bitRightDownOffset := id/8, id%8               //相对于 n >>3  , n & 7(0b00000111)
+	if (128 >> bitRightDownOffset & bitMap[bitIndex]) == 0 { //等于0代表之前没有记忆 那么是不重复的点 需要添加记录
 		*slice = append(*slice, id)
 		bitMap[bitIndex] |= 128 >> bitRightDownOffset
 	}
@@ -4590,8 +4590,8 @@ func (m *Map) SetSame_BitMap(id int, slice *[]int, bitMap []byte) {
 
 // 边判断临时位图不重复边记录 把位图每1位当做0到正整数不重复顺序排列 01234567,8910....
 func (m *Map) checkAndSetSame_BitMap(id int, slice *[]int, bitMap []byte) bool {
-	bitIndex, bitRightDownOffset := id/8, id%8         //相对于 n >>3  , n & 7(0b00000111)
-	if 128>>bitRightDownOffset&bitMap[bitIndex] == 0 { //等于0代表之前没有记忆 那么是不重复的点 需要添加记录
+	bitIndex, bitRightDownOffset := id/8, id%8               //相对于 n >>3  , n & 7(0b00000111)
+	if (128 >> bitRightDownOffset & bitMap[bitIndex]) == 0 { //等于0代表之前没有记忆 那么是不重复的点 需要添加记录
 		*slice = append(*slice, id)
 		bitMap[bitIndex] |= 128 >> bitRightDownOffset
 		return false
@@ -5389,7 +5389,7 @@ func (m *Map) judgeLineObstacle_ForPreLoad(x1, y1, x2, y2 int) ([]int, []int) {
 				if xStart == bigX { //增加到等于最大X(上面已经判断了) 就结束
 					break
 				}
-			} else {                    //X向左减少
+			} else { //X向左减少
 				if xStart == smallX+1 { //减少到等于最小X+1(上面已经判断了) 就结束
 					break
 				}
@@ -5564,7 +5564,7 @@ func (m *Map) judgeLineObstacle_ForPreLoad(x1, y1, x2, y2 int) ([]int, []int) {
 				if yStart == bigY { //增加到等于最大Y(上面已经判断了) 就结束
 					break
 				}
-			} else {                    //Y向下减少
+			} else { //Y向下减少
 				if yStart == smallY+1 { //减少到等于最小Y+1(上面已经判断了) 就结束
 					break
 				}
@@ -5698,7 +5698,7 @@ func (m *Map) normal_JudgeLine(allNodeSlice, edgeNodeSlice [][]int, singleId, x1
 				return true, nil
 			}
 		}
-	} else {                                                    //当前连线无擦边点 全是必经点
+	} else { //当前连线无擦边点 全是必经点
 		for i := 0; i < len(allNodeSlice[singleId])-1; i += 2 { //-1是因为存的是整数坐标 倒数第2个是x坐标 倒数第1个是y坐标 --注意i范围是到倒数第2个
 			jx1 = allNodeSlice[singleId][i] + x1
 			jy1 = allNodeSlice[singleId][i+1] + y1
